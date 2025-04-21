@@ -1,95 +1,80 @@
 package com.gitfcard.giftcard.security;
 
 
-import org.springframework.cglib.core.Converter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.annotation.Order;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.config.Customizer;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
-import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
-import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.gitfcard.giftcard.config.JwtAuthenticationFilter;
+import com.gitfcard.giftcard.service.CustomUserDetailService;
 
 
 @EnableWebSecurity
 @Configuration
-@EnableWebMvc
 public class SecurityConfig {
 
+	private final CustomUserDetailService customUserDetailService;
 
+	private final JwtAuthenticationFilter jwtAuthFilter;
 
-	@Bean
-	protected UserDetailsService userDetailsService(PasswordEncoder passwordEncoder){
-		InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+	private final CustomAccessDeniedHandler customAccessDeniedHandler;
 
-		manager.createUser(
-			User.builder()
-			.username("user")
-			.password(passwordEncoder.encode("password"))
-			.roles("USER")
-			.build()
-		);
-
-		manager.createUser(
-			User.builder()
-			.username("admin")
-			.password(passwordEncoder.encode("password"))
-			.roles("USER", "ADMIN")
-			.build()
-		);
-
-		return manager;
+	public SecurityConfig(CustomUserDetailService customUserDetailService,
+		CustomAccessDeniedHandler customAccessDeniedHandler,
+		JwtAuthenticationFilter jwtAuthFilter
+	){
+		this.customAccessDeniedHandler = customAccessDeniedHandler;
+		this.customUserDetailService = customUserDetailService;
+		this.jwtAuthFilter = jwtAuthFilter;
 	}
 
 	@Bean
-	@Order(1)                                                        
+	protected PasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder(12);
+	}
+
+	@Bean
 	protected SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
 		http
-			.csrf(csrf -> csrf.disable())
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests((authorize) -> authorize
-				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**",  "/login").permitAll()
+				.requestMatchers("/error").permitAll()
 				.requestMatchers("/api/admin/**").hasRole("ADMIN")
 				.requestMatchers("/api/user/**").hasRole("USER")
 				.anyRequest().authenticated()
 			)
-				.oauth2ResourceServer((oauth2) -> oauth2
-				.jwt(jwt -> jwt
-					.jwtAuthenticationConverter(jwtAuthenticationConverter())
-				)
-			);
+			.exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler))
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
 		return http.build();
 	}
 
-	static class CustomAuthenticationConverter implements Converter<Jwt, AbstractAuthenticationToken> {
-		public AbstractAuthenticationToken convert(Jwt jwt) {
-			return new CustomAuthenticationToken(jwt);
-		}
-	}
 
 	@Bean
-	protected JwtAuthenticationConverter jwtAuthenticationConverter() {
-		JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-		grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-
-		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
-		return jwtAuthenticationConverter;
+	protected AuthenticationProvider authenticationProvider() {
+		DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+		provider.setUserDetailsService(customUserDetailService);
+		provider.setPasswordEncoder(passwordEncoder());
+		return provider;
 	}
 
 
 	@Bean
-	protected PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
+	protected AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+		return config.getAuthenticationManager();
 	}
 
 }
