@@ -10,4 +10,4 @@ public class GiftcardApplication {
 		SpringApplication.run(GiftcardApplication.class, args);
 	}
 
-}
+} 

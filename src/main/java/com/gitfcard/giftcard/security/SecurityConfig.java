@@ -1,6 +1,7 @@
 package com.gitfcard.giftcard.security;
 
 
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -49,10 +50,11 @@ public class SecurityConfig {
 		http
 			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests((authorize) -> authorize
-				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**",  "/login").permitAll()
+				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
+				.requestMatchers("/api/auth/**").permitAll()  
 				.requestMatchers("/error").permitAll()
 				.requestMatchers("/api/admin/**").hasRole("ADMIN")
-				.requestMatchers("/api/user/**").hasRole("USER")
+				.requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")  
 				.anyRequest().authenticated()
 			)
 			.exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler))

@@ -9,10 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 public class UserResponceDTO {
-	private Long id;
-	private String firstName;
-	private String lastName;
-	private String email;
+    private Long id;
+    private String firstName;
+    private String lastName;
+    private String email;
 
     public UserResponceDTO(User user) {
         this.id = user.getId();
@@ -20,5 +20,5 @@ public class UserResponceDTO {
         this.lastName = user.getLastName();
         this.email = user.getEmail();
     }
-	
+
 }

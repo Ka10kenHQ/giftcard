@@ -19,12 +19,14 @@ public class OpenApiConfig {
                     .description("API documentation for the GiftCard shop project")
                     .version("v1.0")
                 )
-                .addSecurityItem(new SecurityRequirement().addList("basicAuth"))
+                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
                 .components(new io.swagger.v3.oas.models.Components()
-                    .addSecuritySchemes("basicAuth", 
+                    .addSecuritySchemes("bearerAuth", 
                         new SecurityScheme()
+                            .name("Authorization")
                             .type(SecurityScheme.Type.HTTP)
-                            .scheme("basic")
+                            .scheme("bearer")
+                            .bearerFormat("JWT")
                     )
                 );
     }

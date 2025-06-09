@@ -1,7 +1,5 @@
 package com.gitfcard.giftcard.service;
 
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,9 +8,9 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
-import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,26 +18,16 @@ import org.springframework.stereotype.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JWTService {
 
-	private String secretKey = "";
+	@Value("${jwt.secret}")
+	private String secretKey;
 
-	private Long expirationTime = 600000L;
-
-	
-	public JWTService() {
-		try {
-			KeyGenerator keyGen = KeyGenerator.getInstance("HmacSHA256");
-			SecretKey sk = keyGen.generateKey();
-			secretKey = Base64.getEncoder().encodeToString(sk.getEncoded());
-		} catch (NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-	}
+	@Value("${jwt.expiration}")
+	private Long expirationTime;
 
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
@@ -71,22 +59,22 @@ public class JWTService {
 		Map<String, Object> claims = new HashMap<>();
 
 		claims.put("roles", authorities.stream()
-			                       .map(GrantedAuthority::getAuthority)
-			                       .collect(Collectors.toList()));
+			.map(GrantedAuthority::getAuthority)
+			.collect(Collectors.toList()));
 
 		return Jwts.builder()
-		.claims()
-		.add(claims)
-		.subject(userEmail)
-		.issuedAt(issuedAt)
-		.expiration(expirationDate)
-		.and()
-		.signWith(getKey())
-		.compact();
+					.claims()
+					.add(claims)
+					.subject(userEmail)
+					.issuedAt(issuedAt)
+					.expiration(expirationDate)
+					.and()
+					.signWith(getKey())
+					.compact();
 	}
 
 	private SecretKey getKey() {
-		byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+		byte[] keyBytes = secretKey.getBytes();
 		return Keys.hmacShaKeyFor(keyBytes);
 	}
 

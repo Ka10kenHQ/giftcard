@@ -1,22 +1,34 @@
 package com.gitfcard.giftcard.dto;
 
-import com.gitfcard.giftcard.entity.User;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
-public class UserUpdateDTO {
+public class UserRegisterDTO {
+
+    @NotBlank(message = "First name is required")
     private String firstName;
+    
+    @NotBlank(message = "Last name is required")
     private String lastName;
+    
+    @NotBlank(message = "Email is required")
+    @Email(message = "Email should be valid")
     private String email;
+    
+    @NotBlank(message = "Password is required")
+    @Size(min = 6, message = "Password must be at least 6 characters long")
     private String password;
 
-    public UserUpdateDTO() {
+    public UserRegisterDTO() {
         // No-args constructor
     }
 
-    public UserUpdateDTO(User user) {
-        this.firstName = user.getFirstName();
-        this.lastName = user.getLastName();
-        this.email = user.getEmail();
-        this.password = user.getPassword();
+    public UserRegisterDTO(String firstName, String lastName, String email, String password) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
     }
 
     public String getFirstName() {

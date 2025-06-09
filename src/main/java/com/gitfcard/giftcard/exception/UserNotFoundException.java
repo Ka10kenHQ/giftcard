@@ -3,7 +3,7 @@ package com.gitfcard.giftcard.exception;
 public class UserNotFoundException extends Exception{
 
 	public UserNotFoundException(Long id, String firstName){
-		super("User: " + firstName + "with id: " + id + " not found");
+		super("User: " + firstName + " with id: " + id + " not found");
 	}
 
 	public UserNotFoundException(Long id){

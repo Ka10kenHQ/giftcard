@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gitfcard.giftcard.dto.UserLoginDTO;
+import com.gitfcard.giftcard.dto.UserRegisterDTO;
 import com.gitfcard.giftcard.dto.UserRequestDTO;
 import com.gitfcard.giftcard.dto.UserResponceDTO;
 import com.gitfcard.giftcard.dto.UserUpdateDTO;
@@ -66,6 +67,26 @@ public class UserService {
 
 
 	public UserResponceDTO save(UserRequestDTO user) {
+
+		String hashedPassword = passwordEncoder.encode(user.getPassword());
+
+		User newUser = new User(user.getFirstName(), user.getLastName(), user.getEmail(), hashedPassword);
+		
+		Role userRole = roleRepository.findByName("ROLE_USER")
+		                .orElseThrow(() -> new RuntimeException("Default role not found."));
+
+		newUser.setRoles(Set.of(userRole));
+
+		User savedUser = userRepository.save(newUser);
+		
+		return new UserResponceDTO(savedUser);
+	}
+
+	public UserResponceDTO save(UserRegisterDTO user) {
+		// Check if user already exists
+		if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+			throw new IllegalArgumentException("User already exists with email: " + user.getEmail());
+		}
 
 		String hashedPassword = passwordEncoder.encode(user.getPassword());
 
