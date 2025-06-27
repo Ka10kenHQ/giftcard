@@ -10,6 +10,7 @@
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/dto/UserResponceDTO.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/dto/UserTokenResponseDTO.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/dto/UserUpdateDTO.java
+/home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/entity/GiftCard.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/entity/Role.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/entity/User.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/exception/UserNotFoundException.java

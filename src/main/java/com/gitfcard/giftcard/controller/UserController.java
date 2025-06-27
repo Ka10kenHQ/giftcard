@@ -14,26 +14,31 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gitfcard.giftcard.dto.ErrorResponseDTO;
 import com.gitfcard.giftcard.dto.UserRequestDTO;
 import com.gitfcard.giftcard.dto.UserResponceDTO;
 import com.gitfcard.giftcard.dto.UserUpdateDTO;
+import com.gitfcard.giftcard.service.JWTUtil;
 import com.gitfcard.giftcard.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 	private final UserService userService;
+	private final JWTUtil jwtUtil;
 
 	@Autowired
-	public UserController(UserService userService){
+	public UserController(UserService userService, JWTUtil jwtUtil){
 		this.userService = userService;
+		this.jwtUtil = jwtUtil;
 	}
 
 	@Operation(summary = "Get all users")
-	@GetMapping
+	@GetMapping("/")
 	public List<UserResponceDTO> getAllUser(){
 		return userService.getAllUsers();
 	}
@@ -56,7 +61,14 @@ public class UserController {
 
 	@Operation(summary = "Update user info")
 	@PutMapping("/{id}")
-	public ResponseEntity<UserResponceDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO user) throws Exception {
+	public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO user, HttpServletRequest request) throws Exception {
+		Long currentUserId = jwtUtil.getCurrentUserIdFromRequest(request);
+		
+		if (!id.equals(currentUserId)) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN)
+			.body(new ErrorResponseDTO("You can only update your own profile"));
+		}
+
 		UserResponceDTO updatedUserBody = userService.update(user, id);
 		return ResponseEntity.status(HttpStatus.OK).body(updatedUserBody);
 	}

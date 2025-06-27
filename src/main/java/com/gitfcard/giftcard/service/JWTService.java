@@ -33,6 +33,9 @@ public class JWTService {
 		return extractClaim(token, Claims::getSubject);
 	}
 
+	public Long extractUserId(String token) {
+		return extractClaim(token, claims -> claims.get("userId", Long.class));
+	}
 
 	public boolean isTokenValid(String token, UserDetails userDetails) {
 		final String username = extractUsername(token);
@@ -51,13 +54,13 @@ public class JWTService {
 		.collect(Collectors.toList());
 	}
 
-
-	public String generateToken(String userEmail, Collection<? extends GrantedAuthority> authorities) {
+	public String generateToken(String userEmail, Long userId, Collection<? extends GrantedAuthority> authorities) {
 		Date issuedAt = new Date(System.currentTimeMillis());
 		Date expirationDate = new Date(System.currentTimeMillis() + expirationTime);
 
 		Map<String, Object> claims = new HashMap<>();
 
+		claims.put("userId", userId);
 		claims.put("roles", authorities.stream()
 			.map(GrantedAuthority::getAuthority)
 			.collect(Collectors.toList()));

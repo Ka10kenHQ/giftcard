@@ -72,7 +72,7 @@ public class UserService {
 
 		User newUser = new User(user.getFirstName(), user.getLastName(), user.getEmail(), hashedPassword);
 		
-		Role userRole = roleRepository.findByName("ROLE_USER")
+		Role userRole = roleRepository.findByRoleName("ROLE_USER")
 		                .orElseThrow(() -> new RuntimeException("Default role not found."));
 
 		newUser.setRoles(Set.of(userRole));
@@ -92,7 +92,7 @@ public class UserService {
 
 		User newUser = new User(user.getFirstName(), user.getLastName(), user.getEmail(), hashedPassword);
 		
-		Role userRole = roleRepository.findByName("ROLE_USER")
+		Role userRole = roleRepository.findByRoleName("ROLE_USER")
 		                .orElseThrow(() -> new RuntimeException("Default role not found."));
 
 		newUser.setRoles(Set.of(userRole));
@@ -139,7 +139,7 @@ public class UserService {
 	 	                                           .map(role -> new SimpleGrantedAuthority(role.getName())) 
 		                                           .collect(Collectors.toList());
 	
-		return jwtService.generateToken(user.getEmail(), authorities);
+		return jwtService.generateToken(user.getEmail(), dbUser.getId(), authorities);
 
 	}
 
@@ -149,8 +149,8 @@ public class UserService {
 		String email = "admin@example.com";
 
 		if (userRepository.findByEmail(email).isEmpty()) {
-			Optional<Role> userRole = roleRepository.findByName("ROLE_USER");
-			Optional<Role> adminRole = roleRepository.findByName("ROLE_ADMIN");
+			Optional<Role> userRole = roleRepository.findByRoleName("ROLE_USER");
+			Optional<Role> adminRole = roleRepository.findByRoleName("ROLE_ADMIN");
 
 			if (userRole.isEmpty() || adminRole.isEmpty()) {
 				throw new IllegalStateException("Roles must exist before creating the admin user!");

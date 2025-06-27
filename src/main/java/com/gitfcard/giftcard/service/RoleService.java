@@ -8,8 +8,10 @@ import com.gitfcard.giftcard.entity.Role;
 import com.gitfcard.giftcard.repository.RoleRepository;
 
 import jakarta.annotation.PostConstruct;
+import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class RoleService {
 
     private final RoleRepository roleRepository;
@@ -18,8 +20,8 @@ public class RoleService {
         this.roleRepository = roleRepository;
     }
 
-    public Optional<Role> findByName(String name) {
-        return roleRepository.findByName(name);
+    public Optional<Role> findByRoleName(String name) {
+        return roleRepository.findByRoleName(name);
     }
 
    @PostConstruct
@@ -29,7 +31,7 @@ public class RoleService {
     }
 
     public void createRoleIfNotFound(String roleName) {
-        if (roleRepository.findByName(roleName).isEmpty()) {
+        if (roleRepository.findByRoleName(roleName).isEmpty()) {
             Role role = new Role(roleName);
             roleRepository.save(role);
             System.out.println("Role " + roleName + " created.");
