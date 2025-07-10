@@ -4,6 +4,7 @@
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/controller/AuthController.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/controller/UserController.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/dto/ErrorResponseDTO.java
+/home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/dto/GiftRedeemRequestDTO.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/dto/UserLoginDTO.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/dto/UserRegisterDTO.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/dto/UserRequestDTO.java
@@ -14,11 +15,14 @@
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/entity/Role.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/entity/User.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/exception/UserNotFoundException.java
+/home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/repository/GiftCardRepository.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/repository/RoleRepository.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/repository/UserRepository.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/security/CustomAccessDeniedHandler.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/security/SecurityConfig.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/service/CustomUserDetailService.java
+/home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/service/GiftCardService.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/service/JWTService.java
+/home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/service/JWTUtil.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/service/RoleService.java
 /home/achir/gift/giftcard/src/main/java/com/gitfcard/giftcard/service/UserService.java

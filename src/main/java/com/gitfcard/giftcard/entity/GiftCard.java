@@ -8,25 +8,26 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "gift_card")
 public class GiftCard {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	@Column(name = "code", unique = true, nullable = false)
-    private String code;
+	private String code;
 
 	@Column(name = "balance", nullable = false)
 	@Positive(message = "Balance must be positive")
-    private BigDecimal balance;
+	private BigDecimal balance;
 
 	@Column(name = "expiration_date", nullable = false)
 	@Future(message = "Expiration date must be in the future")
-    private LocalDateTime expirationDate;
+	private LocalDateTime expirationDate;
 
 	@Column(name = "redeemed", nullable = false)
-    private boolean redeemed;
+	private boolean redeemed;
 
 
 

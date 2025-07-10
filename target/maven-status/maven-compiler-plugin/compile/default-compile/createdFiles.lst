@@ -5,8 +5,10 @@ com/gitfcard/giftcard/config/JwtAuthenticationFilter.class
 com/gitfcard/giftcard/dto/ErrorResponseDTO.class
 com/gitfcard/giftcard/entity/GiftCard.class
 com/gitfcard/giftcard/service/RoleService.class
+com/gitfcard/giftcard/dto/GiftRedeemRequestDTO.class
 com/gitfcard/giftcard/dto/UserLoginDTO.class
 com/gitfcard/giftcard/config/OpenApiConfig.class
+com/gitfcard/giftcard/service/JWTUtil.class
 com/gitfcard/giftcard/dto/UserRequestDTO.class
 com/gitfcard/giftcard/dto/UserResponceDTO.class
 com/gitfcard/giftcard/service/JWTService.class
@@ -15,9 +17,11 @@ com/gitfcard/giftcard/controller/UserController.class
 com/gitfcard/giftcard/entity/User.class
 com/gitfcard/giftcard/service/UserService.class
 com/gitfcard/giftcard/entity/Role.class
+com/gitfcard/giftcard/service/GiftCardService.class
 com/gitfcard/giftcard/dto/UserUpdateDTO.class
 com/gitfcard/giftcard/service/CustomUserDetailService.class
 com/gitfcard/giftcard/controller/AuthController.class
+com/gitfcard/giftcard/repository/GiftCardRepository.class
 com/gitfcard/giftcard/repository/UserRepository.class
 com/gitfcard/giftcard/dto/UserRegisterDTO.class
 com/gitfcard/giftcard/security/CustomAccessDeniedHandler.class
