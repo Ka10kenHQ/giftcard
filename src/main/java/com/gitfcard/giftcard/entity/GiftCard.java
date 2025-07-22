@@ -6,14 +6,15 @@ import jakarta.validation.constraints.Positive;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "gift_card")
 public class GiftCard {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	@GeneratedValue
+	private UUID id;
 
 	@Column(name = "code", unique = true, nullable = false)
 	private String code;
@@ -29,7 +30,8 @@ public class GiftCard {
 	@Column(name = "redeemed", nullable = false)
 	private boolean redeemed;
 
-
+	@Column(name = "creation_date", nullable = false)
+	private LocalDateTime creationDate;
 
 	public GiftCard(String code, BigDecimal balance, LocalDateTime expirationDate) {
 		this.code = code;
@@ -38,7 +40,7 @@ public class GiftCard {
 		this.redeemed = false;
 	}
 
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 
