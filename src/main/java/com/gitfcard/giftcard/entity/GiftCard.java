@@ -33,11 +33,23 @@ public class GiftCard {
 	@Column(name = "creation_date", nullable = false)
 	private LocalDateTime creationDate;
 
-	public GiftCard(String code, BigDecimal balance, LocalDateTime expirationDate) {
+
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "gift_card_type_id")
+	private GiftCardType giftCardType;
+
+	public GiftCard(String code, BigDecimal balance, LocalDateTime expirationDate, GiftCardType giftCardType) {
 		this.code = code;
 		this.balance = balance;
 		this.expirationDate = expirationDate;
 		this.redeemed = false;
+		this.creationDate = LocalDateTime.now();
+		this.giftCardType = giftCardType;
+	}
+
+
+	public GiftCard(){
+
 	}
 
 	public UUID getId() {
@@ -64,6 +76,22 @@ public class GiftCard {
 		this.redeemed = true;
 	}
 
+	public LocalDateTime getCreationDate() {
+		return creationDate;
+	}
+
+
+	public GiftCardType getGiftCardType() {
+		return giftCardType;
+	}
+
+
+	
+	public void setCreationDate(LocalDateTime creationDate) {
+		this.creationDate = creationDate;
+	}
+
+
 	public void setExpirationDate(LocalDateTime expirationDate) {
 		this.expirationDate = expirationDate;
 	}
@@ -74,5 +102,19 @@ public class GiftCard {
 
 	public void setBalance(BigDecimal balance) {
 		this.balance = balance;
+	}
+
+	public void setId(UUID id) {
+		this.id = id;
+	}
+
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
+
+	public void setGiftCardType(GiftCardType giftCardType) {
+		this.giftCardType = giftCardType;
 	}
 }

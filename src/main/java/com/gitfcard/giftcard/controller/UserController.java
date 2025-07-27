@@ -18,7 +18,6 @@ import com.gitfcard.giftcard.dto.ErrorResponseDTO;
 import com.gitfcard.giftcard.dto.UserRequestDTO;
 import com.gitfcard.giftcard.dto.UserResponceDTO;
 import com.gitfcard.giftcard.dto.UserUpdateDTO;
-import com.gitfcard.giftcard.service.GiftCardService;
 import com.gitfcard.giftcard.service.JWTUtil;
 import com.gitfcard.giftcard.service.UserService;
 
@@ -31,13 +30,11 @@ import jakarta.validation.Valid;
 public class UserController {
 	private final UserService userService;
 	private final JWTUtil jwtUtil;
-	private final GiftCardService giftCardService;
 
 	@Autowired
-	public UserController(UserService userService, JWTUtil jwtUtil, GiftCardService giftCardService){
+	public UserController(UserService userService, JWTUtil jwtUtil){
 		this.userService = userService;
 		this.jwtUtil = jwtUtil;
-		this.giftCardService = giftCardService;
 	}
 
 	@Operation(summary = "Get all users")
@@ -83,10 +80,4 @@ public class UserController {
 		return ResponseEntity.ok("User: " + id + " Deleted successfully");
 	}
 
-	@Operation(summary = "Redeem the card")
-	@GetMapping("/redeem/{id}")
-	public ResponseEntity<String> redeemCard(@PathVariable Long id) throws Exception {
-		giftCardService.redeem(id);
-		return ResponseEntity.ok("Card successfully redeem for userId: " + id);
-	}
 }

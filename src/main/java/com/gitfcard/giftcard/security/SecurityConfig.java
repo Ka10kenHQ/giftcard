@@ -4,6 +4,7 @@ package com.gitfcard.giftcard.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -50,10 +51,23 @@ public class SecurityConfig {
 		http
 			.csrf(AbstractHttpConfigurer::disable)
 			.authorizeHttpRequests((authorize) -> authorize
+				// swagger and auth public
 				.requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
 				.requestMatchers("/api/auth/**").permitAll()  
 				.requestMatchers("/error").permitAll()
-				.requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")  
+
+				// ADMIN only
+				.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+
+				.requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
+
+				// Cards and orders accessible by USER or ADMIN
+				.requestMatchers("/api/cards/**").hasAnyRole("USER", "ADMIN")
+				.requestMatchers("/api/orders/**").hasAnyRole("USER", "ADMIN")
+
+				// Card types strictly ADMIN
+				.requestMatchers("/api/card-types/**").hasAnyRole("ADMIN")
+
 				.anyRequest().authenticated()
 			)
 			.exceptionHandling(e -> e.accessDeniedHandler(customAccessDeniedHandler))
