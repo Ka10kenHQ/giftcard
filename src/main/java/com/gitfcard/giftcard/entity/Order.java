@@ -28,7 +28,7 @@ public class Order {
 	private User user;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<OrderItem> orderItems;
+	private List<GiftCard> giftCards;
 
 
 	@Column(name = "order_date")
@@ -52,9 +52,8 @@ public class Order {
 	}
 
 
-
 	public Long getId() {
-		return id;
+		return this.id;
 	}
 
 	public void setId(Long id) {
@@ -62,7 +61,7 @@ public class Order {
 	}
 
 	public User getUser() {
-		return user;
+		return this.user;
 	}
 
 	public void setUser(User user) {
@@ -70,7 +69,7 @@ public class Order {
 	}
 
 	public LocalDateTime getOrderDate() {
-		return orderDate;
+		return this.orderDate;
 	}
 
 	public void setOrderDate(LocalDateTime orderDate) {
@@ -78,12 +77,12 @@ public class Order {
 	}
 
 	public OrderStatus getStatus() {
-		return status;
+		return this.status;
 	}
 
 	
-	public List<OrderItem> getOrderItems() {
-		return orderItems;
+	public List<GiftCard> getGiftCards() {
+		return this.giftCards;
 	}
 
 
@@ -99,8 +98,8 @@ public class Order {
 		this.totalPrice = totalPrice;
 	}
 
-	public void setOrderItems(List<OrderItem> orderItems) {
-		this.orderItems = orderItems;
+	public void setGiftCards(List<GiftCard> giftCards) {
+		this.giftCards = giftCards;
 	}
 
 }

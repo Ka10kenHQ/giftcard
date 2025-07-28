@@ -56,10 +56,9 @@ public class SecurityConfig {
 				.requestMatchers("/api/auth/**").permitAll()  
 				.requestMatchers("/error").permitAll()
 
-				// ADMIN only
 				.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
-
-				.requestMatchers("/api/users/**").hasAnyRole("USER", "ADMIN")
+				.requestMatchers("/api/users/me/**").hasAnyRole("USER","ADMIN")
+				.requestMatchers("/api/users/**").hasAnyRole("ADMIN")
 
 				// Cards and orders accessible by USER or ADMIN
 				.requestMatchers("/api/cards/**").hasAnyRole("USER", "ADMIN")

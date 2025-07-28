@@ -9,19 +9,19 @@ public class RequestOrderDTO {
     @NotNull(message = "User ID is required")
     private Long userId;
 
-    @NotEmpty(message = "At least one order item is required")
-    private List<OrderItemDTO> orderItems;
+    @NotEmpty(message = "At least one gift card request is required")
+    private List<GiftCardRequestDTO> giftCards;
 
-    public static class OrderItemDTO {
+    public static class GiftCardRequestDTO {
         @NotNull(message = "Card type ID is required")
         private Long cardTypeId;
 
         @NotNull(message = "Quantity is required")
         private Integer quantity;
 
-        public OrderItemDTO() {}
+        public GiftCardRequestDTO() {}
 
-        public OrderItemDTO(Long cardTypeId, Integer quantity) {
+        public GiftCardRequestDTO(Long cardTypeId, Integer quantity) {
             this.cardTypeId = cardTypeId;
             this.quantity = quantity;
         }
@@ -45,25 +45,25 @@ public class RequestOrderDTO {
 
     public RequestOrderDTO() {}
 
-    public RequestOrderDTO(Long userId, List<OrderItemDTO> orderItems) {
+    public RequestOrderDTO(Long userId, List<GiftCardRequestDTO> giftCards) {
         this.userId = userId;
-        this.orderItems = orderItems;
+        this.giftCards = giftCards;
     }
 
     public Long getUserId() {
         return userId;
     }
 
-    public List<OrderItemDTO> getOrderItems() {
-        return orderItems;
+    public List<GiftCardRequestDTO> getGiftCards() {
+        return giftCards;
     }
 
     public void setUserId(Long userId) {
         this.userId = userId;
     }
 
-    public void setOrderItems(List<OrderItemDTO> orderItems) {
-        this.orderItems = orderItems;
+    public void setGiftCards(List<GiftCardRequestDTO> giftCards) {
+        this.giftCards = giftCards;
     }
 }
 

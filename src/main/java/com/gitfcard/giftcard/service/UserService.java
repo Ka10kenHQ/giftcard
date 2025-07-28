@@ -17,12 +17,14 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gitfcard.giftcard.dto.UserLoginDTO;
+import com.gitfcard.giftcard.dto.UserPatchDTO;
 import com.gitfcard.giftcard.dto.UserRegisterDTO;
 import com.gitfcard.giftcard.dto.UserRequestDTO;
 import com.gitfcard.giftcard.dto.UserResponceDTO;
 import com.gitfcard.giftcard.dto.UserUpdateDTO;
 import com.gitfcard.giftcard.entity.Role;
 import com.gitfcard.giftcard.entity.User;
+import com.gitfcard.giftcard.exception.EmailAlreadyUsedException;
 import com.gitfcard.giftcard.exception.UserNotFoundException;
 import com.gitfcard.giftcard.repository.RoleRepository;
 import com.gitfcard.giftcard.repository.UserRepository;
@@ -62,6 +64,12 @@ public class UserService {
 	public UserResponceDTO getUserById(Long id) throws UserNotFoundException {
 		User user =  userRepository.findById(id)
 		.orElseThrow(() -> new UserNotFoundException(id));
+		return new UserResponceDTO(user);
+	}
+
+	public UserResponceDTO getUserByEmail(String email) throws UserNotFoundException{
+		User user = userRepository.findByEmail(email)
+		                          .orElseThrow(() -> new UserNotFoundException(email));
 		return new UserResponceDTO(user);
 	}
 
@@ -117,6 +125,58 @@ public class UserService {
 
 		return new UserResponceDTO(storedUser);
 	}
+
+	public UserResponceDTO updateByEmail(String email, UserUpdateDTO user) throws Exception {
+		User updatedUser = userRepository.findByEmail(email)
+							.orElseThrow(() -> new UserNotFoundException(email));
+
+		if (user.getEmail() != null && !user.getEmail().equals(email)) {
+			if (userRepository.existsByEmail(user.getEmail())) {
+				throw new EmailAlreadyUsedException(user.getEmail());
+			}
+			updatedUser.setEmail(user.getEmail());
+		}
+
+		if (user.getFirstName() != null) {
+			updatedUser.setFirstName(user.getFirstName());
+		}
+		if (user.getLastName() != null) {
+			updatedUser.setLastName(user.getLastName());
+		}
+
+		if (user.getPassword() != null && !user.getPassword().isBlank()) {
+			String hashedPassword = passwordEncoder.encode(user.getPassword());
+			updatedUser.setPassword(hashedPassword);
+		}
+
+		User storedUser = userRepository.save(updatedUser);
+
+		return new UserResponceDTO(storedUser);
+	}
+
+	public UserResponceDTO patchByEmail(String email, UserPatchDTO dto) throws Exception {
+		User user = userRepository.findByEmail(email)
+		.orElseThrow(() -> new UserNotFoundException(email));
+
+		if (dto.getEmail() != null && !dto.getEmail().equals(email)) {
+			if (userRepository.existsByEmail(dto.getEmail())) {
+				throw new EmailAlreadyUsedException(dto.getEmail());
+			}
+			user.setEmail(dto.getEmail());
+		}
+
+		if (dto.getFirstName() != null) user.setFirstName(dto.getFirstName());
+		if (dto.getLastName() != null) user.setLastName(dto.getLastName());
+
+		if (dto.getPassword() != null && !dto.getPassword().isBlank()) {
+			String hashedPassword = passwordEncoder.encode(dto.getPassword());
+			user.setPassword(hashedPassword);
+		}
+
+		User updated = userRepository.save(user);
+		return new UserResponceDTO(updated);
+	}
+
 
 	public void delete(Long id) throws Exception{
 		User user = userRepository.findById(id)

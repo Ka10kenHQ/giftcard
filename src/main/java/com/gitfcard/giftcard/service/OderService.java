@@ -14,7 +14,6 @@ import com.gitfcard.giftcard.dto.RequestOrderDTO;
 import com.gitfcard.giftcard.entity.GiftCard;
 import com.gitfcard.giftcard.entity.GiftCardType;
 import com.gitfcard.giftcard.entity.Order;
-import com.gitfcard.giftcard.entity.OrderItem;
 import com.gitfcard.giftcard.entity.OrderStatus;
 import com.gitfcard.giftcard.entity.User;
 import com.gitfcard.giftcard.repository.GiftCardRepository;
@@ -29,6 +28,8 @@ import jakarta.validation.Valid;
 @Service
 @Transactional
 public class OderService {
+
+	private static final BigDecimal DEFAULT_GIFT_CARD_BALANCE = new BigDecimal("50.00");
 
 	private OrderRepository orderRepository;
 	private UserRepository userRepository;
@@ -50,10 +51,17 @@ public class OderService {
 		                          .orElseThrow(() -> new EntityNotFoundException("User not found"));
 
 
-		List<OrderItem> orderItems = new ArrayList<>();
+		List<GiftCard> giftCards = new ArrayList<>();
 		BigDecimal totalOrderPrice = BigDecimal.ZERO;
+		LocalDateTime now = LocalDateTime.now();
 
-		for (RequestOrderDTO.OrderItemDTO itemDTO : requestOrderDTO.getOrderItems()) {
+		Order order = new Order();
+		order.setUser(user);
+		order.setOrderDate(LocalDateTime.now());
+		order.setStatus(OrderStatus.PENDING);
+
+
+		for (RequestOrderDTO.GiftCardRequestDTO itemDTO : requestOrderDTO.getGiftCards()) {
 			GiftCardType cardType = giftCardTypeRepository
 											.findById(itemDTO.getCardTypeId())
 											.orElseThrow(() -> new EntityNotFoundException("CardType not found: " + itemDTO.getCardTypeId()));
@@ -61,45 +69,34 @@ public class OderService {
 			for (int i = 0; i < itemDTO.getQuantity(); i++) {
 				GiftCard giftCard = new GiftCard(
 					generateRandomCode(),
-					new BigDecimal("50.00"),
+					DEFAULT_GIFT_CARD_BALANCE,
 					LocalDateTime.now().plusDays(365),
-					cardType
+					cardType,
+					order
 				);
 				giftCard.setRedeemed(false);
-				giftCard.setCreationDate(LocalDateTime.now());
+				giftCard.setCreationDate(now);
 				giftCardRepository.save(giftCard);
 
-				OrderItem orderItem = new OrderItem();
-				orderItem.setGiftCard(giftCard);
-				orderItems.add(orderItem);
 
 				totalOrderPrice = totalOrderPrice.add(giftCard.getBalance());
 			}
 		}
 
-		Order order = new Order();
-		order.setUser(user);
-		order.setOrderDate(LocalDateTime.now());
-		order.setStatus(OrderStatus.PENDING);
-		order.setTotalPrice(totalOrderPrice);
-		order.setOrderItems(orderItems);
 
-		orderItems.forEach(item -> item.setOrder(order)); 
+		order.setGiftCards(giftCards);
+		order.setTotalPrice(totalOrderPrice);
+
 		orderRepository.save(order);
 
-		List<OrderResponseDTO.GiftCardItemDTO> giftCardDTOs = orderItems.stream()
-		.map(item -> {
-			GiftCard gc = item.getGiftCard();
-			GiftCardType type = gc.getGiftCardType();
-
-			return new OrderResponseDTO.GiftCardItemDTO(
-				gc.getId(),
-				gc.getCode(),
-				gc.getBalance(),
-				gc.isRedeemed(),
-				type.getCurrency()
-			);
-		}).toList();
+		List<OrderResponseDTO.GiftCardItemDTO> giftCardDTOs = giftCards.stream()
+		.map(item -> new OrderResponseDTO.GiftCardItemDTO(
+			             item.getId(),
+			             item.getCode(),
+			             item.getBalance(),
+			             item.isRedeemed(),
+			             item.getGiftCardType().getCurrency()))
+		            .toList();
 
 		return new OrderResponseDTO(
 			order.getId(),
