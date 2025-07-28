@@ -18,11 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gitfcard.giftcard.dto.ErrorResponseDTO;
+import com.gitfcard.giftcard.dto.OrderResponseDTO;
 import com.gitfcard.giftcard.dto.UserPatchDTO;
 import com.gitfcard.giftcard.dto.UserRequestDTO;
 import com.gitfcard.giftcard.dto.UserResponceDTO;
 import com.gitfcard.giftcard.dto.UserUpdateDTO;
 import com.gitfcard.giftcard.service.JWTUtil;
+import com.gitfcard.giftcard.service.OrderService;
 import com.gitfcard.giftcard.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -33,11 +35,13 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/users")
 public class UserController {
 	private final UserService userService;
+	private final OrderService orderService;
 	private final JWTUtil jwtUtil;
 
 	@Autowired
-	public UserController(UserService userService, JWTUtil jwtUtil){
+	public UserController(UserService userService,OrderService orderService, JWTUtil jwtUtil){
 		this.userService = userService;
+		this.orderService = orderService;
 		this.jwtUtil = jwtUtil;
 	}
 
@@ -123,6 +127,21 @@ public class UserController {
 
 		return ResponseEntity.ok(updatedUser);
 
+	}
+
+	@Operation(summary = "Get current users orders")
+	@GetMapping("/me/orders")
+	public ResponseEntity<List<OrderResponseDTO>> getCurrentUserOrders(@AuthenticationPrincipal UserDetails userDetails){
+		String email = userDetails.getUsername();
+		List<OrderResponseDTO> orders = orderService.getOrderByUserEmail(email);
+		return ResponseEntity.ok(orders);
+	}
+
+	@Operation(summary = "Get users order by id")
+	@GetMapping("/{id}/orders")
+	public ResponseEntity<List<OrderResponseDTO>> getUsersOrdersById(@PathVariable Long id){
+		List<OrderResponseDTO> orders = orderService.getOrdersByUserId(id);
+		return ResponseEntity.ok(orders);
 	}
 
 }

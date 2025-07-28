@@ -46,9 +46,10 @@ public class JWTService {
 		return !isTokenExpired(token);
 	}
 
+	@SuppressWarnings("unchecked")
 	public Collection<? extends GrantedAuthority> extractAuthorities(String token) {
 		Claims claims = extractAllClaims(token);
-		List<String> roles = claims.get("roles", List.class);
+		List<String> roles = (List<String>) claims.get("roles", List.class);
 		return roles.stream()
 		.map(SimpleGrantedAuthority::new)
 		.collect(Collectors.toList());

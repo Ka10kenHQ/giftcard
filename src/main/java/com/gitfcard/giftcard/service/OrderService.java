@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +28,7 @@ import jakarta.validation.Valid;
 
 @Service
 @Transactional
-public class OderService {
+public class OrderService {
 
 	private static final BigDecimal DEFAULT_GIFT_CARD_BALANCE = new BigDecimal("50.00");
 
@@ -37,7 +38,7 @@ public class OderService {
 	private GiftCardTypeRepository giftCardTypeRepository;
 
 	@Autowired
-	public OderService(OrderRepository orderRepository, UserRepository userRepository,
+	public OrderService(OrderRepository orderRepository, UserRepository userRepository,
 		GiftCardRepository giftCardRepository,
 		GiftCardTypeRepository giftCardTypeRepository){
 		this.orderRepository = orderRepository;
@@ -108,6 +109,58 @@ public class OderService {
 		);
 
 	}
+
+
+	public List<OrderResponseDTO> getOrderByUserEmail(String email) {
+		List<Order> orders = orderRepository.findAllByUserEmail(email);
+
+		return orders.stream().map(order -> {
+			List<OrderResponseDTO.GiftCardItemDTO> giftCardItems = order.getGiftCards().stream()
+			.map(card -> new OrderResponseDTO.GiftCardItemDTO(
+				card.getId(),
+				card.getCode(),
+				card.getBalance(),
+				card.isRedeemed(),
+				card.getGiftCardType().getCurrency()
+			))
+			.toList();
+
+			return new OrderResponseDTO(
+				order.getId(),
+				order.getUser().getId(),
+				order.getOrderDate(),
+				order.getStatus().name(),
+				order.getTotalPrice(),
+				giftCardItems
+			);
+		}).toList();
+	}
+
+	public List<OrderResponseDTO> getOrdersByUserId(Long userId) {
+		List<Order> orders = orderRepository.findAllByUserId(userId);
+
+		return orders.stream().map(order -> {
+			List<OrderResponseDTO.GiftCardItemDTO> giftCardItems = order.getGiftCards().stream()
+			.map(card -> new OrderResponseDTO.GiftCardItemDTO(
+				card.getId(),
+				card.getCode(),
+				card.getBalance(),
+				card.isRedeemed(),
+				card.getGiftCardType().getCurrency()
+			))
+			.collect(Collectors.toList());
+
+			return new OrderResponseDTO(
+				order.getId(),
+				order.getUser().getId(),
+				order.getOrderDate(),
+				order.getStatus().name(),
+				order.getTotalPrice(),
+				giftCardItems
+			);
+		}).collect(Collectors.toList());
+	}
+
 
 	private String generateRandomCode() {
 		return UUID.randomUUID().toString().replace("-", "").substring(0, 16).toUpperCase();

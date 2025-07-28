@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gitfcard.giftcard.dto.OrderResponseDTO;
 import com.gitfcard.giftcard.dto.RequestOrderDTO;
-import com.gitfcard.giftcard.service.OderService;
+import com.gitfcard.giftcard.service.OrderService;
 
 import jakarta.validation.Valid;
 
@@ -17,10 +17,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-	private OderService orderService;
+	private OrderService orderService;
 
 
-	public OrderController(OderService orderService){
+	public OrderController(OrderService orderService){
 		this.orderService = orderService;
 	}
 
