@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gitfcard.giftcard.dto.GiftCardTypeResponseDTO;
+import com.gitfcard.giftcard.entity.GiftCardType;
 import com.gitfcard.giftcard.repository.GiftCardTypeRepository;
 
 import jakarta.transaction.Transactional;
@@ -15,7 +16,7 @@ import jakarta.transaction.Transactional;
 @Transactional
 public class CardTypeService {
 
-	private GiftCardTypeRepository giftCardTypeRepository;
+	private final GiftCardTypeRepository giftCardTypeRepository;
 
 	@Autowired
 	public CardTypeService(GiftCardTypeRepository giftCardTypeRepository){
@@ -29,4 +30,14 @@ public class CardTypeService {
 			   )
 			.collect(Collectors.toList());
 	}
+
+    public void create(String name, String currency) {
+        GiftCardType newType = new GiftCardType(name, currency);
+        giftCardTypeRepository.save(newType);
+    }
+
+    public void delete(Long id) {
+        giftCardTypeRepository.deleteById(id);
+    }
 }
+

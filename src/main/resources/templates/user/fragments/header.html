@@ -1,0 +1,15 @@
+<nav
+  th:fragment="siteHeader"
+  style="background: #2c3e50; padding: 1rem; color: #ecf0f1"
+>
+  <a th:href="@{/}" style="color: #ecf0f1; margin-right: 15px">Home</a>
+  <a th:href="@{/users/me}" style="color: #ecf0f1; margin-right: 15px"
+    >My Profile</a
+  >
+  <a
+    th:href="@{/users/me/orders/view}"
+    style="color: #ecf0f1; margin-right: 15px"
+    >Order Details</a
+  >
+  <a th:href="@{/logout}" style="color: #ecf0f1">Logout</a>
+</nav>

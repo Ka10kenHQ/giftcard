@@ -1,9 +1,13 @@
 package com.gitfcard.giftcard.service;
 
+import java.util.List;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import io.jsonwebtoken.Claims;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Component
@@ -20,8 +24,18 @@ public class JWTUtil {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             return authHeader.substring(7);
         }
+
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if ("jwtToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
         return null;
     }
+
 
     public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -45,5 +59,20 @@ public class JWTUtil {
             return extractUserIdFromToken(token);
         }
         return null;
+    }
+
+    public boolean isAdmin(String token) {
+        Claims claims = jwtService.extractAllClaims(token);
+        if (claims == null) return false;
+
+        Object rolesObject = claims.get("roles");
+        if (rolesObject instanceof List<?>) {
+            List<?> roles = (List<?>) rolesObject;
+            return roles.stream()
+                        .filter(role -> role instanceof String)
+                        .map(role -> (String) role)
+                        .anyMatch(role -> role.equalsIgnoreCase("ROLE_ADMIN"));
+        }
+        return false;
     }
 } 

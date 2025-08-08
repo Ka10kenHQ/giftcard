@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import javax.crypto.SecretKey;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -16,12 +18,16 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.gitfcard.giftcard.config.JwtAuthenticationFilter;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 
 @Service
 public class JWTService {
+
+	private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
 
 	@Value("${jwt.secret}")
 	private String secretKey;
@@ -50,9 +56,10 @@ public class JWTService {
 	public Collection<? extends GrantedAuthority> extractAuthorities(String token) {
 		Claims claims = extractAllClaims(token);
 		List<String> roles = (List<String>) claims.get("roles", List.class);
+		logger.debug("Extracted roles from token: {}", roles);
 		return roles.stream()
-		.map(SimpleGrantedAuthority::new)
-		.collect(Collectors.toList());
+					.map(SimpleGrantedAuthority::new)
+					.collect(Collectors.toList());
 	}
 
 	public String generateToken(String userEmail, Long userId, Collection<? extends GrantedAuthority> authorities) {
@@ -87,13 +94,13 @@ public class JWTService {
 		return claimsResolver.apply(claims);
 	}
 
-	private Claims extractAllClaims(String token) {
+	protected Claims extractAllClaims(String token) {
 
-		return Jwts.parser()
-		.verifyWith(getKey())
-		.build()
-		.parseSignedClaims(token)
-		.getPayload();
+		return  Jwts.parser()
+					.verifyWith(getKey())
+					.build()
+					.parseSignedClaims(token)
+					.getPayload();
 	}
 
 	private boolean isTokenExpired(String token) {

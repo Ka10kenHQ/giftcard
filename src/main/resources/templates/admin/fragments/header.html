@@ -1,0 +1,13 @@
+<div th:fragment="adminHeader">
+  <nav>
+    <div class="logo">Admin Panel</div>
+    <div>
+      <a th:href="@{/users/me}">Profile</a>
+      <a th:href="@{/admin/dashboard}">Dashboard</a>
+      <a th:href="@{/admin/users}">Manage Users</a>
+      <a th:href="@{/admin/orders}">Manage Orders</a>
+      <a th:href="@{/admin/card-types}">Card Types</a>
+      <a th:href="@{/logout}">Logout</a>
+    </div>
+  </nav>
+</div>

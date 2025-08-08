@@ -54,13 +54,15 @@ public class OrderResponseDTO {
         private BigDecimal balance;
         private boolean redeemed;
         private String currency;
+        private LocalDateTime expirationDate;
 
-        public GiftCardItemDTO(UUID giftCardId, String code, BigDecimal balance, boolean redeemed, String currency) {
+        public GiftCardItemDTO(UUID giftCardId, String code, BigDecimal balance, boolean redeemed, String currency, LocalDateTime expirationDate) {
             this.giftCardId = giftCardId;
             this.code = code;
             this.balance = balance;
             this.redeemed = redeemed;
             this.currency = currency;
+            this.expirationDate = expirationDate;
         }
 
         public UUID getGiftCardId() {
@@ -81,6 +83,10 @@ public class OrderResponseDTO {
 
         public String getCurrency() {
             return currency;
+        }
+
+        public LocalDateTime getExpirationDate() {
+            return expirationDate;
         }
     }
 }

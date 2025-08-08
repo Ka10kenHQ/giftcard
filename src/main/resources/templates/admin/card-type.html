@@ -1,0 +1,199 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gift Card Types</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 2rem;
+        color: #333;
+      }
+
+      table {
+        border-collapse: collapse;
+        width: 60%;
+        margin: 2rem auto;
+        font-family: Arial, sans-serif;
+      }
+      th,
+      td {
+        padding: 10px;
+        border: 1px solid #d35400;
+        text-align: left;
+      }
+      th {
+        background-color: #e67e22;
+        color: white;
+      }
+      tr:nth-child(even) {
+        background-color: #fef7e0;
+      }
+      .btn-create {
+        display: block;
+        margin: 1rem auto;
+        padding: 10px 20px;
+        background-color: #e67e22;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      .btn-create:hover {
+        background-color: #d35400;
+      }
+      form {
+        width: 60%;
+        margin: 0 auto 2rem;
+        padding: 1rem;
+        border: 1px solid #d35400;
+        border-radius: 6px;
+        background-color: #fef7e0;
+        font-family: Arial, sans-serif;
+      }
+      label {
+        display: block;
+        margin-bottom: 0.3rem;
+        font-weight: bold;
+        color: #d35400;
+      }
+      input[type="text"] {
+        width: 100%;
+        padding: 8px;
+        margin-bottom: 1rem;
+        border: 1px solid #d35400;
+        border-radius: 4px;
+      }
+      input[type="submit"] {
+        padding: 10px 20px;
+        background-color: #e67e22;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      input[type="submit"]:hover {
+        background-color: #d35400;
+      }
+
+      select#name {
+        width: 100%;
+        padding: 10px 12px;
+        margin-bottom: 1rem;
+        border: 2px solid #d35400;
+        border-radius: 6px;
+        background-color: #fff8f0;
+        font-size: 1rem;
+        color: #333;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition:
+          border-color 0.3s ease,
+          box-shadow 0.3s ease,
+          background-color 0.3s ease;
+        appearance: none; /* removes default arrow on most browsers */
+        background-image: url("data:image/svg+xml;utf8,<svg fill='%23d35400' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+        background-repeat: no-repeat;
+        background-position: right 12px center;
+        background-size: 16px 16px;
+        cursor: pointer;
+      }
+
+      select#name:hover {
+        border-color: #d35400cc;
+        background-color: #fff6e8;
+      }
+
+      select#name:focus {
+        outline: none;
+        border-color: #e67e22;
+        box-shadow: 0 0 8px rgba(230, 126, 34, 0.6);
+        background-color: #fffdfa;
+      }
+
+      nav {
+        background-color: #2c3e50;
+        padding: 1rem 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #ecf0f1;
+        font-family: Arial, sans-serif;
+      }
+
+      nav .logo {
+        font-weight: bold;
+        font-size: 1.2rem;
+      }
+
+      nav a {
+        color: #ecf0f1;
+        margin-left: 15px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+
+      nav a:hover {
+        color: #e67e22;
+      }
+    </style>
+    <script>
+      function toggleForm() {
+        const form = document.getElementById("createForm");
+        form.style.display = form.style.display === "none" ? "block" : "none";
+      }
+    </script>
+  </head>
+  <body>
+    <div th:replace="admin/fragments/header :: adminHeader"></div>
+
+    <h1 style="text-align: center; color: #d35400">Gift Card Types</h1>
+
+    <button class="btn-create" onclick="toggleForm()">
+      Create New Card Type
+    </button>
+
+    <form
+      id="createForm"
+      th:action="@{/admin/card-types/create}"
+      method="post"
+      style="display: none"
+    >
+      <label for="name">Name</label>
+      <select id="name" name="name" required>
+        <option value="" disabled selected>Select Card Type</option>
+        <option value="Amazon">Amazon</option>
+        <option value="Google Play">Google Play</option>
+        <option value="Steam">Steam</option>
+        <option value="iTunes">iTunes</option>
+      </select>
+
+      <label for="currency">Currency</label>
+      <input id="currency" name="currency" type="text" required />
+
+      <input type="submit" value="Create" />
+    </form>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Currency</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="type : ${cardTypes}">
+          <td th:text="${type.id}"></td>
+          <td th:text="${type.name}"></td>
+          <td th:text="${type.currency}"></td>
+        </tr>
+        <tr th:if="${#lists.isEmpty(cardTypes)}">
+          <td colspan="3" style="text-align: center">No card types found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

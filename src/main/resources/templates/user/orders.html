@@ -1,0 +1,103 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Your Orders</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 2rem;
+        color: #333;
+      }
+      h1 {
+        color: #e67e22;
+        border-bottom: 2px solid #e67e22;
+        padding-bottom: 0.5rem;
+      }
+      .order {
+        background: white;
+        padding: 1rem 2rem;
+        margin-bottom: 2rem;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgb(0 0 0 / 0.1);
+      }
+      .gift-cards {
+        margin-top: 1rem;
+        border-collapse: collapse;
+        width: 100%;
+      }
+      .gift-cards th,
+      .gift-cards td {
+        padding: 0.5rem 1rem;
+        border: 1px solid #ddd;
+      }
+      .gift-cards th {
+        background-color: #e67e22;
+        color: white;
+      }
+      .gift-cards tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      .redeemed {
+        color: green;
+        font-weight: bold;
+      }
+      .expired {
+        color: red;
+        font-weight: bold;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Your Orders</h1>
+
+    <div th:if="${#lists.isEmpty(orders)}">
+      <p>No orders found.</p>
+    </div>
+
+    <div th:each="order : ${orders}" class="order">
+      <h2>Order ID: <span th:text="${order.id}"></span></h2>
+      <p>
+        <strong>Date:</strong>
+        <span
+          th:text="${#dates.format(order.orderDate, 'dd MMM yyyy HH:mm')}"
+        ></span>
+      </p>
+      <p><strong>Status:</strong> <span th:text="${order.status}"></span></p>
+      <p>
+        <strong>Total Price:</strong> $<span
+          th:text="${order.totalPrice}"
+        ></span>
+      </p>
+
+      <table class="gift-cards" th:if="${order.giftCards != null}">
+        <thead>
+          <tr>
+            <th>Card Code</th>
+            <th>Balance</th>
+            <th>Redeemed</th>
+            <th>Currency</th>
+            <th>Expiration</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr th:each="card : ${order.giftCards}">
+            <td th:text="${card.code}"></td>
+            <td>$<span th:text="${card.balance}"></span></td>
+            <td
+              th:text="${card.redeemed} ? 'Yes' : 'No'"
+              th:classappend="${card.redeemed} ? 'redeemed' : ''"
+            ></td>
+            <td th:text="${card.currency}"></td>
+            <td
+              th:text="${#dates.format(card.expirationDate, 'dd MMM yyyy')}"
+              th:classappend="${card.expirationDate.isBefore(T(java.time.LocalDateTime).now())} ? 'expired' : ''"
+            ></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </body>
+</html>

@@ -1,0 +1,115 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gift Card Details</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f8;
+        color: #333;
+        padding: 20px;
+        max-width: 600px;
+        margin: 0 auto;
+      }
+      h1 {
+        color: #e67e22;
+        border-bottom: 2px solid #e67e22;
+        padding-bottom: 0.5rem;
+        margin-bottom: 1rem;
+        text-align: center;
+      }
+      dl {
+        background: white;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      dt {
+        font-weight: 700;
+        margin-top: 10px;
+      }
+      dd {
+        margin-left: 1rem;
+        margin-bottom: 10px;
+      }
+      .message {
+        margin: 15px 0;
+        padding: 10px;
+        border-radius: 5px;
+        font-weight: 600;
+        color: white;
+        background-color: #27ae60;
+        text-align: center;
+      }
+      .error {
+        background-color: #c0392b;
+      }
+      form {
+        text-align: center;
+        margin-top: 20px;
+      }
+      button {
+        background-color: #e67e22;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        font-weight: 700;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+      button:hover {
+        background-color: #d35400;
+      }
+      a {
+        display: block;
+        text-align: center;
+        margin-top: 20px;
+        text-decoration: none;
+        color: #e67e22;
+        font-weight: 600;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Gift Card Details</h1>
+
+    <div
+      th:if="${message}"
+      th:text="${message}"
+      th:classappend="${message.startsWith('Error') ? 'message error' : 'message'}"
+    ></div>
+
+    <dl>
+      <dt>Code:</dt>
+      <dd th:text="${card.code}"></dd>
+
+      <dt>Balance:</dt>
+      <dd th:text="${card.balance}"></dd>
+
+      <dt>Expiration Date:</dt>
+      <dd
+        th:text="${#dates.format(card.expirationDate, 'dd MMM yyyy HH:mm')}"
+      ></dd>
+
+      <dt>Redeemed:</dt>
+      <dd th:text="${card.redeemed}"></dd>
+
+      <dt>Creation Date:</dt>
+      <dd
+        th:text="${#dates.format(card.creationDate, 'dd MMM yyyy HH:mm')}"
+      ></dd>
+    </dl>
+
+    <form
+      th:action="@{'/cards/' + ${card.id} + '/redeem'}"
+      method="post"
+      th:if="${!card.redeemed}"
+    >
+      <button type="submit">Redeem Card</button>
+    </form>
+
+    <a th:href="@{/cards}">Back to list</a>
+  </body>
+</html>

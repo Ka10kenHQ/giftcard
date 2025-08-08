@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.gitfcard.giftcard.dto.UserLoginDTO;
+import com.gitfcard.giftcard.dto.UserMapper;
 import com.gitfcard.giftcard.dto.UserPatchDTO;
 import com.gitfcard.giftcard.dto.UserRegisterDTO;
 import com.gitfcard.giftcard.dto.UserRequestDTO;
@@ -186,7 +187,7 @@ public class UserService {
 
 	public String verifyUser(UserLoginDTO user) throws Exception{
 		User dbUser = userRepository.findByEmail(user.getEmail())
-		.orElseThrow(() -> new UserNotFoundException(user.getEmail()));
+									.orElseThrow(() -> new UserNotFoundException(user.getEmail()));
 
 		Authentication authentication = authManager.authenticate(
 			new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword()));
@@ -202,6 +203,12 @@ public class UserService {
 		return jwtService.generateToken(user.getEmail(), dbUser.getId(), authorities);
 
 	}
+
+	public UserUpdateDTO getUserUpdateDTOByEmail(String email) throws Exception {
+		UserResponceDTO user = this.getUserByEmail(email);
+		return UserMapper.toUserUpdateDTO(user);
+	}
+
 
 
 	@PostConstruct

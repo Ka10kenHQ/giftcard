@@ -1,0 +1,82 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Gift Cards</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f8;
+        color: #333;
+        padding: 20px;
+      }
+      h1 {
+        color: #e67e22;
+        margin-bottom: 20px;
+        border-bottom: 2px solid #e67e22;
+        padding-bottom: 0.5rem;
+        text-align: center;
+      }
+      table {
+        width: 90%;
+        margin: 0 auto;
+        border-collapse: collapse;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+      th,
+      td {
+        padding: 10px 15px;
+        border: 1px solid #ddd;
+        text-align: center;
+      }
+      th {
+        background-color: #e67e22;
+        color: white;
+      }
+      tr:nth-child(even) {
+        background-color: #f9f9f9;
+      }
+      a {
+        color: #e67e22;
+        font-weight: 600;
+        text-decoration: none;
+        margin: 0 5px;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Gift Cards</h1>
+    <table>
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Balance</th>
+          <th>Expiration Date</th>
+          <th>Redeemed</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr th:each="card : ${cards}">
+          <td th:text="${card.code}"></td>
+          <td th:text="${card.balance}"></td>
+          <td
+            th:text="${#dates.format(card.expirationDate, 'dd MMM yyyy HH:mm')}"
+          ></td>
+          <td th:text="${card.redeemed}"></td>
+          <td>
+            <a th:href="@{'/cards/' + ${card.id}}">View</a>
+          </td>
+        </tr>
+        <tr th:if="${cards.size() == 0}">
+          <td colspan="5">No gift cards found.</td>
+        </tr>
+      </tbody>
+    </table>
+  </body>
+</html>

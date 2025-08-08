@@ -18,6 +18,7 @@ import com.gitfcard.giftcard.service.JWTService;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
@@ -35,25 +36,41 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         this.userDetailsService = userDetailsService;
     }
 
+
+    private String extractJwtFromRequest(HttpServletRequest request) {
+        String authHeader = request.getHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+        if (request.getCookies() != null) {
+            for (Cookie cookie : request.getCookies()) {
+                if ("jwtToken".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        return null;
+    }
+
+
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-            throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request,
+        HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         
-        final String authHeader = request.getHeader("Authorization");
         final String requestURI = request.getRequestURI();
         
         logger.debug("Processing request to: {}", requestURI);
-        logger.debug("Authorization header: {}", authHeader != null ? "Present" : "Missing");
         
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            logger.debug("No Bearer token found, continuing without authentication");
+        final String jwt = extractJwtFromRequest(request);
+        if (jwt == null) {
+            logger.debug("No JWT token found in header or cookies, continuing without authentication");
             filterChain.doFilter(request, response);
             return;
         }
 
-        final String jwt = authHeader.substring(7);
         logger.debug("JWT token extracted, length: {}", jwt.length());
         
+
         try {
             final String userEmail = jwtService.extractUsername(jwt);
             logger.debug("Extracted username from JWT: {}", userEmail);

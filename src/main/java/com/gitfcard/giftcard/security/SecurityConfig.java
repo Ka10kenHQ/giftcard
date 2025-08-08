@@ -56,6 +56,10 @@ public class SecurityConfig {
 				.requestMatchers("/api/auth/**").permitAll()  
 				.requestMatchers("/error").permitAll()
 
+				.requestMatchers("/", "/login", "/login.html", "/images/**").permitAll()
+				.requestMatchers("/users/me/**").authenticated()
+				.requestMatchers("/admin/**").hasAnyRole("ADMIN")
+
 				.requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
 				.requestMatchers("/api/users/me/**").hasAnyRole("USER","ADMIN")
 				.requestMatchers("/api/users/**").hasAnyRole("ADMIN")

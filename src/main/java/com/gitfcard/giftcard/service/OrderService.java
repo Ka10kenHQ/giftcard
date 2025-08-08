@@ -79,7 +79,7 @@ public class OrderService {
 				giftCard.setCreationDate(now);
 				giftCardRepository.save(giftCard);
 
-
+				giftCards.add(giftCard);
 				totalOrderPrice = totalOrderPrice.add(giftCard.getBalance());
 			}
 		}
@@ -96,7 +96,9 @@ public class OrderService {
 			             item.getCode(),
 			             item.getBalance(),
 			             item.isRedeemed(),
-			             item.getGiftCardType().getCurrency()))
+			             item.getGiftCardType().getCurrency(),
+			             item.getExpirationDate()
+		                 ))
 		            .toList();
 
 		return new OrderResponseDTO(
@@ -121,7 +123,8 @@ public class OrderService {
 				card.getCode(),
 				card.getBalance(),
 				card.isRedeemed(),
-				card.getGiftCardType().getCurrency()
+				card.getGiftCardType().getCurrency(),
+				card.getExpirationDate()
 			))
 			.toList();
 
@@ -146,7 +149,8 @@ public class OrderService {
 				card.getCode(),
 				card.getBalance(),
 				card.isRedeemed(),
-				card.getGiftCardType().getCurrency()
+				card.getGiftCardType().getCurrency(),
+				card.getExpirationDate()
 			))
 			.collect(Collectors.toList());
 
@@ -159,6 +163,31 @@ public class OrderService {
 				giftCardItems
 			);
 		}).collect(Collectors.toList());
+	}
+
+	public OrderResponseDTO getOrderById(Long orderId) throws Exception {
+		Order order = orderRepository.findById(orderId)
+		.orElseThrow(() -> new EntityNotFoundException("Order not found with id: " + orderId));
+
+		List<OrderResponseDTO.GiftCardItemDTO> giftCardItems = order.getGiftCards().stream()
+							  .map(card -> new OrderResponseDTO.GiftCardItemDTO(
+									card.getId(),
+									card.getCode(),
+									card.getBalance(),
+									card.isRedeemed(),
+									card.getGiftCardType().getCurrency(),
+									card.getExpirationDate()  // If you added expiration here
+								))
+								.collect(Collectors.toList());
+
+		return new OrderResponseDTO(
+			order.getId(),
+			order.getUser().getId(),
+			order.getOrderDate(),
+			order.getStatus().name(),
+			order.getTotalPrice(),
+			giftCardItems
+		);
 	}
 
 
