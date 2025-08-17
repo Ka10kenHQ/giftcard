@@ -77,7 +77,7 @@ The system identifies the following core business objects:
 - **Order → OrderStatus**: Each order has one status from the enumeration
 
 ## 5. Class Diagram
-![](./diagram.jpg)
+![](./images/diagram.jpg)
 
 ## 6. CRC Cards Summary
 
