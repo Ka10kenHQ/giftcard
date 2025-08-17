@@ -36,7 +36,6 @@ public class JWTUtil {
         return null;
     }
 
-
     public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication != null && authentication.isAuthenticated()) {
