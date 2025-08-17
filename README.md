@@ -1,5 +1,8 @@
 # GiftCard Service — Requirements and Use Case Design
 
+## Overview
+![](./images/panel.jpg)
+
 ## 1. Functional Requirements
 - User registration and authentication (JWT-based)  
 - User profile management (view, update, partial update)  
